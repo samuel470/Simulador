@@ -22,10 +22,7 @@ public class PgblSimuladorService {
      * Realiza a simulação completa de incentivo fiscal PGBL
      */
     public SimulacaoResponse simular(SimulacaoRequest request) {
-        // Validação inicial
-        if (!request.getTemPrevidenciaOutraInstituicao()) {
-            return criarRespostaSemDireitoDeducao(request);
-        }
+
 
         boolean isAnual = request.getTipoContribuicao() == TipoContribuicao.ANUAL;
         BigDecimal rendaBruta = request.getRendaBruta();
@@ -33,6 +30,10 @@ public class PgblSimuladorService {
         // Converte valores para base anual se necessário
         if (!isAnual) {
             rendaBruta = rendaBruta.multiply(new BigDecimal("12"));
+        }
+        if(request.getValorContribuicaoInss().compareTo(BigDecimal.ZERO) == 0 ){
+
+
         }
 
         // Calcula deduções totais (exceto PGBL)
@@ -77,10 +78,12 @@ public class PgblSimuladorService {
         BigDecimal maximoGanhoFiscal = calculoIrService.calcularGanhoFiscal(limitePgbl, aliquotaMarginal);
 
         // Valor atualmente investido (assumindo zero se não informado)
-        BigDecimal valorInvestido = BigDecimal.ZERO;
+        BigDecimal valorInvestido = BigDecimal.valueOf(5000);
 
         // Ganho fiscal atual
-        BigDecimal ganhoFiscalAtual = calculoIrService.calcularGanhoFiscal(valorInvestido, aliquotaMarginal);
+        BigDecimal ganhoFiscalAtual = calculoIrService
+                .calcularGanhoFiscal(valorInvestido, aliquotaMarginal)
+                .min(maximoGanhoFiscal);
 
         // Quanto falta investir
         BigDecimal quantoFaltaInvestir = valorIdealContribuicao.subtract(valorInvestido);
@@ -106,7 +109,7 @@ public class PgblSimuladorService {
         SimulacaoResponse response = new SimulacaoResponse();
         response.setGanhoFiscalMaximo(ganhoFiscalMaximo);
         response.setNovaBaseTributaria(novaBaseTributaria);
-        response.setValorIr(irComPgbl);
+        response.setValorIrComPgbl(irComPgbl);
         response.setBaseTributariaAtual(baseTributariaAtual);
         response.setGanhoFiscalAtual(ganhoFiscalAtual);
         response.setMaximoGanhoFiscal(maximoGanhoFiscal);
@@ -120,57 +123,6 @@ public class PgblSimuladorService {
         return response;
     }
 
-    /**
-     * Cria resposta para casos sem direito à dedução PGBL
-     */
-    private SimulacaoResponse criarRespostaSemDireitoDeducao(SimulacaoRequest request) {
-        SimulacaoResponse response = new SimulacaoResponse();
-        
-        // Todos os valores relacionados ao PGBL são zero
-        response.setGanhoFiscalMaximo(BigDecimal.ZERO);
-        response.setGanhoFiscalAtual(BigDecimal.ZERO);
-        response.setMaximoGanhoFiscal(BigDecimal.ZERO);
-        response.setValorIdealContribuicao(BigDecimal.ZERO);
-        response.setQuantoFaltaInvestir(BigDecimal.ZERO);
-        response.setValorInvestido(BigDecimal.ZERO);
-        response.setEconomiaTotalIr(BigDecimal.ZERO);
-
-        // Calcula apenas os valores básicos de IR
-        boolean isAnual = request.getTipoContribuicao() == TipoContribuicao.ANUAL;
-        BigDecimal rendaBruta = request.getRendaBruta();
-
-        if (!isAnual) {
-            rendaBruta = rendaBruta.multiply(new BigDecimal("12"));
-        }
-
-        BigDecimal totalDeducoes = calculoIrService.calcularDeducoes(
-            ajustarParaAnual(request.getValorContribuicaoInss(), isAnual),
-            ajustarParaAnual(request.getValorInvestidoEducacao(), isAnual),
-            ajustarParaAnual(request.getValorDespesasMedicas(), isAnual),
-            ajustarParaAnual(request.getValorPensaoAlimenticia(), isAnual),
-            request.getQuantidadeDependentes(),
-            ajustarParaAnual(request.getValorInvestidoEducacaoDependentes(), isAnual),
-            ajustarParaAnual(request.getValorDespesasMedicasDependentes(), isAnual),
-            true
-        );
-
-        BigDecimal baseTributaria = calculoIrService.calcularBaseTributavel(rendaBruta, totalDeducoes);
-        BigDecimal valorIr = calculoIrService.calcularImpostoRenda(baseTributaria, true);
-        BigDecimal aliquotaMarginal = calculoIrService.calcularAliquotaMarginal(baseTributaria, true);
-
-        if (!isAnual) {
-            baseTributaria = ajustarParaMensal(baseTributaria);
-            valorIr = ajustarParaMensal(valorIr);
-        }
-
-        response.setBaseTributariaAtual(baseTributaria);
-        response.setNovaBaseTributaria(baseTributaria);
-        response.setValorIr(valorIr);
-        response.setValorIrSemPgbl(valorIr);
-        response.setAliquotaIr(aliquotaMarginal);
-
-        return response;
-    }
 
     /**
      * Ajusta valor para base anual se for mensal

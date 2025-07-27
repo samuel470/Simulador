@@ -52,8 +52,7 @@ class PgblControllerTest {
     void testSimularComDadosValidos() throws Exception {
         SimulacaoRequest request = new SimulacaoRequest();
         request.setTipoContribuicao(TipoContribuicao.ANUAL);
-        request.setRendaBruta(new BigDecimal("120000.00"));
-        request.setTemPrevidenciaOutraInstituicao(true);
+        request.setRendaBruta(new BigDecimal("120000.00"));;
         request.setValorContribuicaoInss(new BigDecimal("1200.00"));
         request.setQuantidadeDependentes(2);
 
@@ -67,20 +66,19 @@ class PgblControllerTest {
                 .andExpect(jsonPath("$.valorIdealContribuicao").exists());
     }
 
-    @Test
-    void testSimularSemPrevidencia() throws Exception {
-        SimulacaoRequest request = new SimulacaoRequest();
-        request.setTipoContribuicao(TipoContribuicao.ANUAL);
-        request.setRendaBruta(new BigDecimal("120000.00"));
-        request.setTemPrevidenciaOutraInstituicao(false);
-
-        mockMvc.perform(post("/pgbl/simular")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.ganhoFiscalMaximo").value(0))
-                .andExpect(jsonPath("$.valorIdealContribuicao").value(0));
-    }
+//    @Test
+//    void testSimularSemPrevidencia() throws Exception {
+//        SimulacaoRequest request = new SimulacaoRequest();
+//        request.setTipoContribuicao(TipoContribuicao.ANUAL);
+//        request.setRendaBruta(new BigDecimal("120000.00"));
+//
+//        mockMvc.perform(post("/pgbl/simular")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(objectMapper.writeValueAsString(request)))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.ganhoFiscalMaximo").value(0))
+//                .andExpect(jsonPath("$.valorIdealContribuicao").value(0));
+//    }
 
     @Test
     void testSimularComDadosInvalidos() throws Exception {
@@ -100,7 +98,7 @@ class PgblControllerTest {
         SimulacaoRequest request = new SimulacaoRequest();
         request.setTipoContribuicao(TipoContribuicao.ANUAL);
         request.setRendaBruta(new BigDecimal("-1000.00"));
-        request.setTemPrevidenciaOutraInstituicao(true);
+
 
         mockMvc.perform(post("/pgbl/simular")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -113,7 +111,6 @@ class PgblControllerTest {
         SimulacaoRequest request = new SimulacaoRequest();
         request.setTipoContribuicao(TipoContribuicao.MENSAL);
         request.setRendaBruta(new BigDecimal("10000.00"));
-        request.setTemPrevidenciaOutraInstituicao(true);
         request.setValorContribuicaoInss(new BigDecimal("100.00"));
 
         mockMvc.perform(post("/pgbl/simular")

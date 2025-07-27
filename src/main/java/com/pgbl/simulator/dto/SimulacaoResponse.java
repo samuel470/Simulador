@@ -9,17 +9,23 @@ import java.math.BigDecimal;
 @Schema(description = "Resultado da simulação de incentivo fiscal PGBL")
 public class SimulacaoResponse {
 
-    @Schema(description = "Ganho fiscal máximo possível", example = "3600.00")
-    private BigDecimal ganhoFiscalMaximo;
+    @Schema(description = "Base tributária atual (sem PGBL)", example = "120000.00")
+    private BigDecimal baseTributariaAtual;
+
+    @Schema(description = "Alíquota de IR aplicável", example = "22.5")
+    private BigDecimal aliquotaIr;
+
+    @Schema(description = "Valor do IR sem PGBL", example = "19000.00")
+    private BigDecimal valorIrSemPgbl;
 
     @Schema(description = "Nova base tributária com PGBL", example = "108000.00")
     private BigDecimal novaBaseTributaria;
 
     @Schema(description = "Valor do IR com PGBL", example = "15400.00")
-    private BigDecimal valorIr;
+    private BigDecimal valorIrComPgbl;
 
-    @Schema(description = "Base tributária atual (sem PGBL)", example = "120000.00")
-    private BigDecimal baseTributariaAtual;
+    @Schema(description = "Ganho fiscal máximo possível", example = "3600.00")
+    private BigDecimal ganhoFiscalMaximo;
 
     @Schema(description = "Ganho fiscal atual com valor investido", example = "2400.00")
     private BigDecimal ganhoFiscalAtual;
@@ -30,17 +36,11 @@ public class SimulacaoResponse {
     @Schema(description = "Valor ideal de contribuição para PGBL", example = "14400.00")
     private BigDecimal valorIdealContribuicao;
 
-    @Schema(description = "Quanto falta investir para atingir o ideal", example = "6000.00")
-    private BigDecimal quantoFaltaInvestir;
-
     @Schema(description = "Valor atualmente investido em PGBL", example = "8400.00")
     private BigDecimal valorInvestido;
 
-    @Schema(description = "Alíquota de IR aplicável", example = "22.5")
-    private BigDecimal aliquotaIr;
-
-    @Schema(description = "Valor do IR sem PGBL", example = "19000.00")
-    private BigDecimal valorIrSemPgbl;
+    @Schema(description = "Quanto falta investir para atingir o ideal", example = "6000.00")
+    private BigDecimal quantoFaltaInvestir;
 
     @Schema(description = "Economia total de IR com PGBL", example = "3600.00")
     private BigDecimal economiaTotalIr;
@@ -49,12 +49,28 @@ public class SimulacaoResponse {
     public SimulacaoResponse() {}
 
     // Getters e Setters
-    public BigDecimal getGanhoFiscalMaximo() {
-        return ganhoFiscalMaximo;
+    public BigDecimal getBaseTributariaAtual() {
+        return baseTributariaAtual;
     }
 
-    public void setGanhoFiscalMaximo(BigDecimal ganhoFiscalMaximo) {
-        this.ganhoFiscalMaximo = ganhoFiscalMaximo;
+    public void setBaseTributariaAtual(BigDecimal baseTributariaAtual) {
+        this.baseTributariaAtual = baseTributariaAtual;
+    }
+
+    public BigDecimal getAliquotaIr() {
+        return aliquotaIr;
+    }
+
+    public void setAliquotaIr(BigDecimal aliquotaIr) {
+        this.aliquotaIr = aliquotaIr;
+    }
+
+    public BigDecimal getValorIrSemPgbl() {
+        return valorIrSemPgbl;
+    }
+
+    public void setValorIrSemPgbl(BigDecimal valorIrSemPgbl) {
+        this.valorIrSemPgbl = valorIrSemPgbl;
     }
 
     public BigDecimal getNovaBaseTributaria() {
@@ -65,20 +81,20 @@ public class SimulacaoResponse {
         this.novaBaseTributaria = novaBaseTributaria;
     }
 
-    public BigDecimal getValorIr() {
-        return valorIr;
+    public BigDecimal getValorIrComPgbl() {
+        return valorIrComPgbl;
     }
 
-    public void setValorIr(BigDecimal valorIr) {
-        this.valorIr = valorIr;
+    public void setValorIrComPgbl(BigDecimal valorIrComPgbl) {
+        this.valorIrComPgbl = valorIrComPgbl;
     }
 
-    public BigDecimal getBaseTributariaAtual() {
-        return baseTributariaAtual;
+    public BigDecimal getGanhoFiscalMaximo() {
+        return ganhoFiscalMaximo;
     }
 
-    public void setBaseTributariaAtual(BigDecimal baseTributariaAtual) {
-        this.baseTributariaAtual = baseTributariaAtual;
+    public void setGanhoFiscalMaximo(BigDecimal ganhoFiscalMaximo) {
+        this.ganhoFiscalMaximo = ganhoFiscalMaximo;
     }
 
     public BigDecimal getGanhoFiscalAtual() {
@@ -105,14 +121,6 @@ public class SimulacaoResponse {
         this.valorIdealContribuicao = valorIdealContribuicao;
     }
 
-    public BigDecimal getQuantoFaltaInvestir() {
-        return quantoFaltaInvestir;
-    }
-
-    public void setQuantoFaltaInvestir(BigDecimal quantoFaltaInvestir) {
-        this.quantoFaltaInvestir = quantoFaltaInvestir;
-    }
-
     public BigDecimal getValorInvestido() {
         return valorInvestido;
     }
@@ -121,20 +129,12 @@ public class SimulacaoResponse {
         this.valorInvestido = valorInvestido;
     }
 
-    public BigDecimal getAliquotaIr() {
-        return aliquotaIr;
+    public BigDecimal getQuantoFaltaInvestir() {
+        return quantoFaltaInvestir;
     }
 
-    public void setAliquotaIr(BigDecimal aliquotaIr) {
-        this.aliquotaIr = aliquotaIr;
-    }
-
-    public BigDecimal getValorIrSemPgbl() {
-        return valorIrSemPgbl;
-    }
-
-    public void setValorIrSemPgbl(BigDecimal valorIrSemPgbl) {
-        this.valorIrSemPgbl = valorIrSemPgbl;
+    public void setQuantoFaltaInvestir(BigDecimal quantoFaltaInvestir) {
+        this.quantoFaltaInvestir = quantoFaltaInvestir;
     }
 
     public BigDecimal getEconomiaTotalIr() {
@@ -150,7 +150,7 @@ public class SimulacaoResponse {
         return "SimulacaoResponse{" +
                 "ganhoFiscalMaximo=" + ganhoFiscalMaximo +
                 ", novaBaseTributaria=" + novaBaseTributaria +
-                ", valorIr=" + valorIr +
+                ", valorIrComPgbl=" + valorIrComPgbl +
                 ", baseTributariaAtual=" + baseTributariaAtual +
                 ", ganhoFiscalAtual=" + ganhoFiscalAtual +
                 ", maximoGanhoFiscal=" + maximoGanhoFiscal +

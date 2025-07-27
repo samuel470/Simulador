@@ -21,9 +21,9 @@ public class SimulacaoRequest {
     @Schema(description = "Renda bruta anual ou mensal", example = "120000.00", required = true)
     private BigDecimal rendaBruta;
 
-    @NotNull(message = "Campo 'tem previdência em outra instituição' é obrigatório")
-    @Schema(description = "Indica se possui previdência em outra instituição", example = "true", required = true)
-    private Boolean temPrevidenciaOutraInstituicao;
+    @DecimalMin(value = "0.0", message = "Valor investido em PGBL em outras instituições não pode ser negativo")
+    @Schema(description = "Valor investido em PGBL em outra instituicao", example = "0")
+    private BigDecimal valorInvestidoPgblOutraInstituicao = BigDecimal.ZERO;
 
     @DecimalMin(value = "0.0", message = "Valor da contribuição INSS não pode ser negativo")
     @Schema(description = "Valor da contribuição para o INSS", example = "1200.00")
@@ -54,97 +54,89 @@ public class SimulacaoRequest {
     @Schema(description = "Valor total das despesas médicas dos dependentes", example = "3000.00")
     private BigDecimal valorDespesasMedicasDependentes = BigDecimal.ZERO;
 
+
+
     // Construtores
     public SimulacaoRequest() {}
 
-    public SimulacaoRequest(TipoContribuicao tipoContribuicao, BigDecimal rendaBruta, 
-                           Boolean temPrevidenciaOutraInstituicao) {
-        this.tipoContribuicao = tipoContribuicao;
-        this.rendaBruta = rendaBruta;
-        this.temPrevidenciaOutraInstituicao = temPrevidenciaOutraInstituicao;
-    }
-
-    // Getters e Setters
-    public TipoContribuicao getTipoContribuicao() {
+    public @NotNull(message = "Tipo de contribuição é obrigatório") TipoContribuicao getTipoContribuicao() {
         return tipoContribuicao;
     }
 
-    public void setTipoContribuicao(TipoContribuicao tipoContribuicao) {
+    public void setTipoContribuicao(@NotNull(message = "Tipo de contribuição é obrigatório") TipoContribuicao tipoContribuicao) {
         this.tipoContribuicao = tipoContribuicao;
     }
 
-    public BigDecimal getRendaBruta() {
+    public @NotNull(message = "Renda bruta é obrigatória") @DecimalMin(value = "0.0", inclusive = false, message = "Renda bruta deve ser maior que zero") BigDecimal getRendaBruta() {
         return rendaBruta;
     }
 
-    public void setRendaBruta(BigDecimal rendaBruta) {
+    public void setRendaBruta(@NotNull(message = "Renda bruta é obrigatória") @DecimalMin(value = "0.0", inclusive = false, message = "Renda bruta deve ser maior que zero") BigDecimal rendaBruta) {
         this.rendaBruta = rendaBruta;
     }
 
-    public Boolean getTemPrevidenciaOutraInstituicao() {
-        return temPrevidenciaOutraInstituicao;
+    public @DecimalMin(value = "0.0", message = "Valor investido em PGBL em outras instituições não pode ser negativo") BigDecimal getValorInvestidoPgblOutraInstituicao() {
+        return valorInvestidoPgblOutraInstituicao;
     }
 
-    public void setTemPrevidenciaOutraInstituicao(Boolean temPrevidenciaOutraInstituicao) {
-        this.temPrevidenciaOutraInstituicao = temPrevidenciaOutraInstituicao;
+    public void setValorInvestidoPgblOutraInstituicao(@DecimalMin(value = "0.0", message = "Valor investido em PGBL em outras instituições não pode ser negativo") BigDecimal valorInvestidoPgblOutraInstituicao) {
+        this.valorInvestidoPgblOutraInstituicao = valorInvestidoPgblOutraInstituicao;
     }
 
-    public BigDecimal getValorContribuicaoInss() {
+    public @DecimalMin(value = "0.0", message = "Valor da contribuição INSS não pode ser negativo") BigDecimal getValorContribuicaoInss() {
         return valorContribuicaoInss;
     }
 
-    public void setValorContribuicaoInss(BigDecimal valorContribuicaoInss) {
-        this.valorContribuicaoInss = valorContribuicaoInss != null ? valorContribuicaoInss : BigDecimal.ZERO;
+    public void setValorContribuicaoInss(@DecimalMin(value = "0.0", message = "Valor da contribuição INSS não pode ser negativo") BigDecimal valorContribuicaoInss) {
+        this.valorContribuicaoInss = valorContribuicaoInss;
     }
 
-    public BigDecimal getValorInvestidoEducacao() {
+    public @DecimalMin(value = "0.0", message = "Valor investido em educação não pode ser negativo") BigDecimal getValorInvestidoEducacao() {
         return valorInvestidoEducacao;
     }
 
-    public void setValorInvestidoEducacao(BigDecimal valorInvestidoEducacao) {
-        this.valorInvestidoEducacao = valorInvestidoEducacao != null ? valorInvestidoEducacao : BigDecimal.ZERO;
+    public void setValorInvestidoEducacao(@DecimalMin(value = "0.0", message = "Valor investido em educação não pode ser negativo") BigDecimal valorInvestidoEducacao) {
+        this.valorInvestidoEducacao = valorInvestidoEducacao;
     }
 
-    public BigDecimal getValorDespesasMedicas() {
+    public @DecimalMin(value = "0.0", message = "Valor de despesas médicas não pode ser negativo") BigDecimal getValorDespesasMedicas() {
         return valorDespesasMedicas;
     }
 
-    public void setValorDespesasMedicas(BigDecimal valorDespesasMedicas) {
-        this.valorDespesasMedicas = valorDespesasMedicas != null ? valorDespesasMedicas : BigDecimal.ZERO;
+    public void setValorDespesasMedicas(@DecimalMin(value = "0.0", message = "Valor de despesas médicas não pode ser negativo") BigDecimal valorDespesasMedicas) {
+        this.valorDespesasMedicas = valorDespesasMedicas;
     }
 
-    public BigDecimal getValorPensaoAlimenticia() {
+    public @DecimalMin(value = "0.0", message = "Valor de pensão alimentícia não pode ser negativo") BigDecimal getValorPensaoAlimenticia() {
         return valorPensaoAlimenticia;
     }
 
-    public void setValorPensaoAlimenticia(BigDecimal valorPensaoAlimenticia) {
-        this.valorPensaoAlimenticia = valorPensaoAlimenticia != null ? valorPensaoAlimenticia : BigDecimal.ZERO;
+    public void setValorPensaoAlimenticia(@DecimalMin(value = "0.0", message = "Valor de pensão alimentícia não pode ser negativo") BigDecimal valorPensaoAlimenticia) {
+        this.valorPensaoAlimenticia = valorPensaoAlimenticia;
     }
 
-    public Integer getQuantidadeDependentes() {
+    public @Min(value = 0, message = "Quantidade de dependentes não pode ser negativa") @Max(value = 20, message = "Quantidade de dependentes não pode ser maior que 20") Integer getQuantidadeDependentes() {
         return quantidadeDependentes;
     }
 
-    public void setQuantidadeDependentes(Integer quantidadeDependentes) {
-        this.quantidadeDependentes = quantidadeDependentes != null ? quantidadeDependentes : 0;
+    public void setQuantidadeDependentes(@Min(value = 0, message = "Quantidade de dependentes não pode ser negativa") @Max(value = 20, message = "Quantidade de dependentes não pode ser maior que 20") Integer quantidadeDependentes) {
+        this.quantidadeDependentes = quantidadeDependentes;
     }
 
-    public BigDecimal getValorInvestidoEducacaoDependentes() {
+    public @DecimalMin(value = "0.0", message = "Valor investido em educação dos dependentes não pode ser negativo") BigDecimal getValorInvestidoEducacaoDependentes() {
         return valorInvestidoEducacaoDependentes;
     }
 
-    public void setValorInvestidoEducacaoDependentes(BigDecimal valorInvestidoEducacaoDependentes) {
-        this.valorInvestidoEducacaoDependentes = valorInvestidoEducacaoDependentes != null ? 
-            valorInvestidoEducacaoDependentes : BigDecimal.ZERO;
+    public void setValorInvestidoEducacaoDependentes(@DecimalMin(value = "0.0", message = "Valor investido em educação dos dependentes não pode ser negativo") BigDecimal valorInvestidoEducacaoDependentes) {
+        this.valorInvestidoEducacaoDependentes = valorInvestidoEducacaoDependentes;
     }
 
-    public BigDecimal getValorDespesasMedicasDependentes() {
+    public @DecimalMin(value = "0.0", message = "Valor de despesas médicas dos dependentes não pode ser negativo") BigDecimal getValorDespesasMedicasDependentes() {
         return valorDespesasMedicasDependentes;
     }
 
-    public void setValorDespesasMedicasDependentes(BigDecimal valorDespesasMedicasDependentes) {
-        this.valorDespesasMedicasDependentes = valorDespesasMedicasDependentes != null ? 
-            valorDespesasMedicasDependentes : BigDecimal.ZERO;
+    public void setValorDespesasMedicasDependentes(@DecimalMin(value = "0.0", message = "Valor de despesas médicas dos dependentes não pode ser negativo") BigDecimal valorDespesasMedicasDependentes) {
+        this.valorDespesasMedicasDependentes = valorDespesasMedicasDependentes;
     }
 
     @Override
@@ -152,7 +144,7 @@ public class SimulacaoRequest {
         return "SimulacaoRequest{" +
                 "tipoContribuicao=" + tipoContribuicao +
                 ", rendaBruta=" + rendaBruta +
-                ", temPrevidenciaOutraInstituicao=" + temPrevidenciaOutraInstituicao +
+                ", valorInvestidoPgblOutraInstituicao=" + valorInvestidoPgblOutraInstituicao +
                 ", valorContribuicaoInss=" + valorContribuicaoInss +
                 ", valorInvestidoEducacao=" + valorInvestidoEducacao +
                 ", valorDespesasMedicas=" + valorDespesasMedicas +
